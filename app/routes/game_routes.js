@@ -29,28 +29,28 @@ const router = express.Router()
 
 // INDEX
 // GET /examples
-router.get('/examples', requireToken, (req, res, next) => {
-	Example.find()
-		.then((examples) => {
+router.get('/game', requireToken, (req, res, next) => {
+	Game.find()
+		.then((game) => {
 			// `examples` will be an array of Mongoose documents
 			// we want to convert each one to a POJO, so we use `.map` to
 			// apply `.toObject` to each one
-			return examples.map((example) => example.toObject())
+			return game.map((game) => game.toObject())
 		})
 		// respond with status 200 and JSON of the examples
-		.then((examples) => res.status(200).json({ examples: examples }))
+		.then((game) => res.status(200).json({ game: game }))
 		// if an error occurs, pass it to the handler
 		.catch(next)
 })
 
 // SHOW
 // GET /examples/5a7db6c74d55bc51bdf39793
-router.get('/examples/:id', requireToken, (req, res, next) => {
+router.get('/game/:id', requireToken, (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
-	Example.findById(req.params.id)
+	Game.findById(req.params.id)
 		.then(handle404)
 		// if `findById` is succesful, respond with 200 and "example" JSON
-		.then((example) => res.status(200).json({ example: example.toObject() }))
+		.then((game) => res.status(200).json({ game: game.toObject() }))
 		// if an error occurs, pass it to the handler
 		.catch(next)
 })
@@ -74,20 +74,20 @@ router.post('/game', requireToken, (req, res, next) => {
 
 // UPDATE
 // PATCH /examples/5a7db6c74d55bc51bdf39793
-router.patch('/examples/:id', requireToken, removeBlanks, (req, res, next) => {
+router.patch('/game/:id', requireToken, removeBlanks, (req, res, next) => {
 	// if the client attempts to change the `owner` property by including a new
 	// owner, prevent that by deleting that key/value pair
-	delete req.body.example.owner
+	delete req.body.game.owner
 
-	Example.findById(req.params.id)
+	Game.findById(req.params.id)
 		.then(handle404)
-		.then((example) => {
+		.then((game) => {
 			// pass the `req` object and the Mongoose record to `requireOwnership`
 			// it will throw an error if the current user isn't the owner
-			requireOwnership(req, example)
+			requireOwnership(req, game)
 
 			// pass the result of Mongoose's `.update` to the next `.then`
-			return example.updateOne(req.body.example)
+			return game.updateOne(req.body.game)
 		})
 		// if that succeeded, return 204 and no JSON
 		.then(() => res.sendStatus(204))
@@ -97,14 +97,14 @@ router.patch('/examples/:id', requireToken, removeBlanks, (req, res, next) => {
 
 // DESTROY
 // DELETE /examples/5a7db6c74d55bc51bdf39793
-router.delete('/examples/:id', requireToken, (req, res, next) => {
-	Example.findById(req.params.id)
+router.delete('/game/:id', requireToken, (req, res, next) => {
+	Game.findById(req.params.id)
 		.then(handle404)
-		.then((example) => {
+		.then((game) => {
 			// throw an error if current user doesn't own `example`
-			requireOwnership(req, example)
+			requireOwnership(req, game)
 			// delete the example ONLY IF the above didn't throw
-			example.deleteOne()
+			game.deleteOne()
 		})
 		// send back 204 and no content if the deletion succeeded
 		.then(() => res.sendStatus(204))
