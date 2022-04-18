@@ -1,9 +1,9 @@
 #!/bin/bash
 
-TITLE="TEST"
-DESCRIPTION="TEST"
-RATING="TEST"
-TOKEN="b3faf8a0ee13c961aee48f18c4cb9656"
+# TITLE="TEST"
+# DESCRIPTION="TEST"
+# RATING="TEST"
+# TOKEN="b3faf8a0ee13c961aee48f18c4cb9656"
 
 API="http://localhost:4741"
 URL_PATH="/game"
